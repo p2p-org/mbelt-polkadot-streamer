@@ -1,4 +1,4 @@
-from substrateinterface import SubstrateInterface, STORAGE_HASH_SYSTEM_EVENTS, STORAGE_HASH_SYSTEM_EVENTS_V9, MetadataDecoder
+from substrateinterface import SubstrateInterface
 import json
 import requests
 from kafka import KafkaProducer
@@ -15,9 +15,17 @@ substrate = SubstrateInterface(
     type_registry_preset='kusama'
 )
 
+metadata_decoder = None
 
 def get_block_events(block_hash):
-    events = substrate.get_block_events(block_hash, metadata_decoder=substrate.get_block_metadata(block_hash=block_hash, decode=True))
+    global metadata_decoder
+
+    try:
+        events = substrate.get_block_events(block_hash, metadata_decoder=metadata_decoder)
+    except:
+        print("get metadata_decoder")
+        metadata_decoder = substrate.get_block_metadata(block_hash=block_hash, decode=True)
+        events = substrate.get_block_events(block_hash, metadata_decoder=metadata_decoder)
     return json.dumps(events.serialize())
 
 ksqlRESTURL = "http://159.69.145.85:8088/query"
