@@ -4,7 +4,7 @@ import requests
 from kafka import KafkaProducer
 
 
-producer = KafkaProducer(bootstrap_servers=['159.69.145.85:9092'],
+producer = KafkaProducer(bootstrap_servers=['broker:9092'],
                          value_serializer=lambda x: x.encode('utf-8'),
                          compression_type='gzip')
 topic = "block_events"
@@ -28,7 +28,7 @@ def get_block_events(block_hash):
         events = substrate.get_block_events(block_hash, metadata_decoder=metadata_decoder)
     return json.dumps(events.serialize())
 
-ksqlRESTURL = "http://159.69.145.85:8088/query"
+ksqlRESTURL = "http://ksqldb-server:8088/query"
 data =  {
   "ksql": "select extractjsonfield(block['header'], '$.hash') from EVENT EMIT CHANGES;",
   "streamsProperties": {
