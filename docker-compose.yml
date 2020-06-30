@@ -192,4 +192,20 @@
           - zookeeper
           - broker
           - schema-registry
-    
+           
+      db:
+        image: postgres
+        restart: always
+        hostname: postgres
+        ports:
+          - "5432:5432"
+        depends_on:
+          - zookeeper
+          - broker
+          - schema-registry
+          - connect
+          - ksqldb-server
+        environment:
+          POSTGRES_PASSWORD: 1234567890
+          POSTGRES_USER: sink
+          POSTGRES_DB: raw

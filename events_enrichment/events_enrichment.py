@@ -30,7 +30,7 @@ def get_block_events(block_hash):
 
 ksqlRESTURL = "http://ksqldb-server:8088/query"
 data =  {
-  "ksql": "select extractjsonfield(block['header'], '$.hash') from EVENT EMIT CHANGES;",
+  "ksql": "select extractjsonfield(block, '$.header.hash') from EVENT EMIT CHANGES;",
   "streamsProperties": {
     "ksql.streams.auto.offset.reset": "latest"
   }
