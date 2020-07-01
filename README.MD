@@ -36,7 +36,7 @@ It collects data from some Kafka topic and inserts the data to a DB table.
 ## Message format examples
 
 * **EVENT** and **EVENT_AVRO** topics:
- ```json
+ ```
 {
   block: {
     header: {
