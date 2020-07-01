@@ -38,6 +38,9 @@ It collects data from some Kafka topic and inserts the data to a DB table.
 Navigate to the Control Center web interface at http://localhost:9021/ and select your cluster.
 ![cluster](images/cluster.png "Cluster")
 
+You'll see an overview of the cluster and some tabs:
+![overview](images/overview.png "Overview")
+
 * **Topics** tab contains all topics created by the script and streams. Click by a topic and you see a full statistic about it.
 ![topic](images/topic.png "Topic")
 
