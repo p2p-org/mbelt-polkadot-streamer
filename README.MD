@@ -12,8 +12,8 @@
 The script will start all necessary KSQLDB, Kafka, ZooKeeper, PostgreSQL containers, create all demo streams and connectors for DB (It'll take about 5 minutes).
 
 Also, it'll start:
-* **PolkadotStreamer** - Node.js script, which collects block's info from Polkadot Node and send it to a Kafka topic - **event**;
-* **EventsEnrichment** - python script, which receives block's hash from KSQLDB stream through REST API, gets block's events by the hash and send them to a Kafka topic - **block_events**
+* **PolkadotStreamer** - Node.js script, which collects block's info from Polkadot Node and sends it to a Kafka topic - **event**;
+* **EventsEnrichment** - python script, which receives block's hash from KSQLDB stream through REST API, gets block's events by the hash and sends them to a Kafka topic - **block_events**
 
 ## What is happening inside KSQLDB?
 Data flow:
@@ -23,7 +23,7 @@ Data flow:
     1. A stream called **EVENT_AVRO** collects raw data from **EVENT** with AVRO format and sends it to topic **EVENT_AVRO** to sink it to a Postgres table 'block_raw';
     2. **EXTRINSICS** - extracts block's number from raw data and explodes event.extrinsics field for further processing;
     3. **EXTRINSICS_PARSED** - extracts all fields (signature, nonce, etc) from earlier exploded field;
-    4. **EXTRINSICS_PARSED_AVRO** - format data to AVRO, sends it to a topic **EXTRINSICS_PARSED_AVRO** to sink it to a Postgres table **extrinsics_parsed**;
+    4. **EXTRINSICS_PARSED_AVRO** - formats the data to AVRO, sends it to a topic **EXTRINSICS_PARSED_AVRO** to sink it to a Postgres table **extrinsics_parsed**;
 2. Data produced by EventsEnrichment gets into Kafka topic **BLOCK_EVENTS** and further into KSQLDB stream **BLOCK_EVENTS**:
     1. **BLOCK_EVENTS_AVRO** formats the data to AVRO and sends it to a topic **BLOCK_EVENTS_AVRO** to sink it to a Postgres table **block_events**;
 
@@ -77,6 +77,15 @@ It collects data from some Kafka topic and inserts the data to a DB table.
 ```
 
 Input and enrichment data are intentionally non-optimal to test and show how different edge cases are handled
+
+## End-to-end latency of streams(topics)
+* **EVENT** (intermediate stream) - 3ms
+* **EVENT_AVRO** (raw block's data sinking to Postgres) - 63ms
+* **BLOCK_EVENTS** (intermediate stream) - 4.5ms
+* **BLOCK_EVENTS_AVRO** (sink to Postgres) - 63ms
+* **EXTRINSICS** (intermediate stream to process data) - 62ms
+* **EXTRINSICS_PARSED** (intermediate stream to process data) - 160ms
+* **EXTRINSICS_PARSED_AVRO** (parsed extrinsic's data sinking to Postgres) - 260ms
 
 ## How to see PoC?
 
