@@ -58,4 +58,6 @@ async function main () {
 
 }
 
+process.on('unhandledRejection', up => { throw up })
+
 main()
